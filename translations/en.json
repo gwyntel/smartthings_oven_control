@@ -1,0 +1,47 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "data": {
+                    "device_id": "SmartThings Device ID",
+                    "friendly_name": "Friendly Name (optional)"
+                },
+                "description": "Enter your SmartThings oven device ID and optional friendly name.",
+                "title": "SmartThings Oven Control"
+            }
+        },
+        "error": {
+            "cannot_connect": "Cannot connect to device",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error",
+            "device_not_found": "Device ID not found",
+            "not_oven_device": "Device is not a DA-KS-RANGE-0101X oven"
+        },
+        "abort": {
+            "already_configured": "Device is already configured"
+        }
+    },
+    "entity": {
+        "select": {
+            "oven_mode": {
+                "name": "Oven Mode"
+            }
+        },
+        "number": {
+            "oven_temperature": {
+                "name": "Oven Temperature"
+            },
+            "oven_cook_time": {
+                "name": "Cook Time"
+            }
+        },
+        "button": {
+            "oven_start": {
+                "name": "Start Cooking"
+            },
+            "oven_sync_time": {
+                "name": "Sync Time"
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+start_cooking:
+  name: Start Cooking
+  description: Start the oven with specified mode, temperature, and cook time
+  fields:
+    entity_id:
+      name: Oven Start Button
+      description: The oven start button entity to trigger
+      required: true
+      selector:
+        entity:
+          domain: button
+          integration: smartthings_oven_control
+
+sync_time:
+  name: Sync Time
+  description: Sync the oven's clock with Home Assistant's time
+  fields:
+    entity_id:
+      name: Oven Sync Time Button
+      description: The oven sync time button entity to trigger
+      required: true
+      selector:
+        entity:
+          domain: button
+          integration: smartthings_oven_control

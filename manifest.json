@@ -1,0 +1,11 @@
+{
+    "domain": "smartthings_oven_control",
+    "name": "SmartThings Oven Control",
+    "dependencies": [],
+    "config_flow": true,
+    "documentation": "",
+    "version": "1.0.0", 
+    "codeowners": [],
+    "iot_class": "cloud_polling",
+    "requirements": []
+}
