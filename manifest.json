@@ -3,9 +3,11 @@
     "name": "SmartThings Oven Control",
     "dependencies": [],
     "config_flow": true,
-    "documentation": "",
+    "documentation": "https://github.com/gwyntel/smartthings_oven_control/blob/main/README.md",
+    "issue_tracker": "https://github.com/gwyntel/smartthings_oven_control/issues",
     "version": "1.0.0", 
-    "codeowners": [],
+    "codeowners": ["@gwyntel"],
     "iot_class": "cloud_polling",
-    "requirements": []
+    "requirements": [],
+    "homeassistant": "2023.1.0"
 }
