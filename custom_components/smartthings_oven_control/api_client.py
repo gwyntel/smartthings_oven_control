@@ -43,7 +43,11 @@ async def execute_oven_command(
     
     try:
         async with session.post(url, headers=headers, json=payload) as response:
-            if response.status != 200:
+            if response.status == 401:
+                _LOGGER.error("SmartThings API authentication error (401) - token may be expired")
+                _LOGGER.error(f"Response: {await response.text()}")
+                raise Exception("SmartThings API authentication failed - token may be expired")
+            elif response.status != 200:
                 _LOGGER.error(f"SmartThings API error: {response.status}")
                 _LOGGER.error(f"Response: {await response.text()}")
                 raise Exception(f"SmartThings API error: {response.status}")

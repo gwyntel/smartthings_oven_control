@@ -1,6 +1,7 @@
 """Utilities for accessing SmartThings tokens from Home Assistant's stored config entries."""
 from __future__ import annotations
 
+import asyncio
 import json
 import time
 import logging
@@ -20,8 +21,12 @@ async def get_smartthings_token(hass: HomeAssistant) -> str | None:
         return None
         
     try:
-        with open(config_entries_file, 'r') as f:
-            data = json.load(f)
+        # Use hass.async_add_executor_job to run the file operation in a thread pool
+        loop = asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, _read_config_file, config_entries_file)
+        
+        if data is None:
+            return None
         
         # Find SmartThings config entry
         for entry in data.get('data', {}).get('entries', []):
@@ -39,8 +44,18 @@ async def get_smartthings_token(hass: HomeAssistant) -> str | None:
                     
         _LOGGER.error("No valid SmartThings integration found")
         return None
-    except (json.JSONDecodeError, FileNotFoundError, KeyError) as e:
+    except Exception as e:
         _LOGGER.error("Error reading SmartThings token: %s", e)
+        return None
+
+
+def _read_config_file(config_entries_file: Path) -> dict | None:
+    """Read config file in a separate thread."""
+    try:
+        with open(config_entries_file, 'r') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, FileNotFoundError, KeyError) as e:
+        _LOGGER.error("Error reading config file: %s", e)
         return None
 
 
@@ -53,8 +68,12 @@ async def get_smartthings_location_id(hass: HomeAssistant) -> str | None:
         return None
         
     try:
-        with open(config_entries_file, 'r') as f:
-            data = json.load(f)
+        # Use hass.async_add_executor_job to run the file operation in a thread pool
+        loop = asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, _read_config_file, config_entries_file)
+        
+        if data is None:
+            return None
         
         # Find SmartThings config entry
         for entry in data.get('data', {}).get('entries', []):
@@ -68,6 +87,6 @@ async def get_smartthings_location_id(hass: HomeAssistant) -> str | None:
                 
         _LOGGER.error("No SmartThings integration found")
         return None
-    except (json.JSONDecodeError, FileNotFoundError, KeyError) as e:
+    except Exception as e:
         _LOGGER.error("Error reading SmartThings location: %s", e)
         return None
