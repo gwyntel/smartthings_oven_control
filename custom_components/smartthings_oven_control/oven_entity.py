@@ -20,13 +20,11 @@ class SmartThingsOvenEntity(Entity):
         self,
         device_id: str,
         friendly_name: str,
-        access_token: str,
         config_entry: ConfigEntry,
     ) -> None:
         """Initialize the base oven entity."""
         self._device_id = device_id
         self._friendly_name = friendly_name
-        self._access_token = access_token
         self._config_entry = config_entry
 
     @property

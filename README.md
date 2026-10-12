@@ -77,6 +77,7 @@ The entities will be grouped under a single "Oven Control" device in Home Assist
 This integration uses SmartThings REST API endpoints:
 - `POST /devices/{device_id}/commands` for oven control
 - Automatically retrieves tokens from HA's SmartThings integration
+- Refreshes the SmartThings access token automatically when it expires
 - No need to manually configure API credentials
 
 ## ⚙️ Configuration
@@ -89,6 +90,7 @@ The integration requires only your SmartThings device ID, which can be found in 
 - **Device not found**: Verify the device ID is correct in the SmartThings app
 - **Temperature validation errors**: Temperature ranges are enforced based on the selected oven mode
 - **API errors**: Check that your SmartThings integration is properly configured and tokens are valid
+- **401 / "token may be expired"**: The token is now refreshed automatically and the request retried once. Persistent 401s mean the SmartThings integration itself needs reauthenticating (Settings > Devices & Services > SmartThings)
 
 ## 🤝 Contributing
 

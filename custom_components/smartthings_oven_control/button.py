@@ -25,7 +25,6 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     device_id = coordinator["device_id"]
     friendly_name = coordinator["friendly_name"]
-    access_token = coordinator["access_token"]
     
     # Store entity references in hass.data for later access
     entity_storage = hass.data[DOMAIN].setdefault("entities", {})
@@ -33,14 +32,12 @@ async def async_setup_entry(
     start_button = OvenStartButton(
         device_id=device_id,
         friendly_name=friendly_name,
-        access_token=access_token,
         config_entry=entry,
     )
     
     sync_button = OvenSyncTimeButton(
         device_id=device_id,
         friendly_name=friendly_name,
-        access_token=access_token,
         config_entry=entry,
     )
     
@@ -58,14 +55,12 @@ class OvenStartButton(SmartThingsOvenEntity, ButtonEntity):
         self,
         device_id: str,
         friendly_name: str,
-        access_token: str,
         config_entry: ConfigEntry,
     ) -> None:
         """Initialize the oven start button."""
         super().__init__(
             device_id=device_id,
             friendly_name=friendly_name,
-            access_token=access_token,
             config_entry=config_entry,
         )
         
@@ -93,7 +88,6 @@ class OvenStartButton(SmartThingsOvenEntity, ButtonEntity):
             await execute_oven_command(
                 self.hass,
                 self._device_id,
-                self._access_token, 
                 "ovenOperatingState",
                 "start",
                 [mode, api_cook_time, api_temperature]
@@ -113,14 +107,12 @@ class OvenSyncTimeButton(SmartThingsOvenEntity, ButtonEntity):
         self,
         device_id: str,
         friendly_name: str,
-        access_token: str,
         config_entry: ConfigEntry,
     ) -> None:
         """Initialize the oven sync time button."""
         super().__init__(
             device_id=device_id,
             friendly_name=friendly_name,
-            access_token=access_token,
             config_entry=config_entry,
         )
         
@@ -137,7 +129,6 @@ class OvenSyncTimeButton(SmartThingsOvenEntity, ButtonEntity):
             await execute_oven_command(
                 self.hass,
                 self._device_id,
-                self._access_token,
                 "execute", 
                 "execute",
                 ["/configuration/vs/0", {"x.com.samsung.da.currentTime": current_time}]

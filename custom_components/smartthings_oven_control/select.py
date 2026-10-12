@@ -35,13 +35,11 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     device_id = coordinator["device_id"]
     friendly_name = coordinator["friendly_name"]
-    access_token = coordinator["access_token"]
     
     async_add_entities([
         OvenModeSelect(
             device_id=device_id,
             friendly_name=friendly_name,
-            access_token=access_token,
             config_entry=entry,
         )
     ])
@@ -54,14 +52,12 @@ class OvenModeSelect(SmartThingsOvenEntity, SelectEntity):
         self,
         device_id: str,
         friendly_name: str,
-        access_token: str,
         config_entry: ConfigEntry,
     ) -> None:
         """Initialize the oven mode select."""
         super().__init__(
             device_id=device_id,
             friendly_name=friendly_name,
-            access_token=access_token,
             config_entry=config_entry,
         )
         

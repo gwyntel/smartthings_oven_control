@@ -3,6 +3,9 @@ from __future__ import annotations
 
 DOMAIN = "smartthings_oven_control"
 
+# Domain of the official SmartThings integration we borrow credentials from
+SMARTTHINGS_DOMAIN = "smartthings"
+
 # API Configuration
 SMARTTHINGS_API_BASE = "https://api.smartthings.com/v1"
 SMARTTHINGS_DEVICE_COMMANDS_URL = "/devices/{device_id}/commands"

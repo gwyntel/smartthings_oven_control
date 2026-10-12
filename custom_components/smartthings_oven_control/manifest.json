@@ -1,13 +1,18 @@
 {
     "domain": "smartthings_oven_control",
     "name": "SmartThings Oven Control",
-    "dependencies": [],
+    "dependencies": [
+        "smartthings",
+        "application_credentials"
+    ],
     "config_flow": true,
     "documentation": "https://github.com/gwyntel/smartthings_oven_control/blob/main/README.md",
     "issue_tracker": "https://github.com/gwyntel/smartthings_oven_control/issues",
-    "version": "1.0.0", 
-    "codeowners": ["@gwyntel"],
+    "version": "1.1.0",
+    "codeowners": [
+        "@gwyntel"
+    ],
     "iot_class": "cloud_polling",
     "requirements": [],
-    "homeassistant": "2023.1.0"
+    "homeassistant": "2025.3.0"
 }

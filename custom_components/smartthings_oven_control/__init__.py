@@ -11,6 +11,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceInfo, async_get as async_get_dev_reg
 
 from .const import DOMAIN
+from .token_utils import async_get_access_token
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,21 +23,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up SmartThings Oven Control from a config entry."""
     hass.data.setdefault(DOMAIN, {})
     
-    # Validate that SmartThings token is available
-    try:
-        from .token_utils import get_smartthings_token
-        access_token = await get_smartthings_token(hass)
-        if not access_token:
-            raise ConfigEntryNotReady("SmartThings integration not found or token expired")
-    except Exception as e:
-        _LOGGER.error("Failed to get SmartThings token: %s", e)
-        raise ConfigEntryNotReady("Failed to access SmartThings token") from e
-    
+    # Verify we can obtain a SmartThings token before setting up entities.
+    # The token itself is deliberately not cached here: SmartThings access
+    # tokens expire after roughly 24 hours, so it is resolved (and refreshed
+    # when needed) at request time instead.
+    if not await async_get_access_token(hass):
+        raise ConfigEntryNotReady(
+            "Unable to obtain a SmartThings access token. Make sure the "
+            "SmartThings integration is set up and authenticated."
+        )
+
     # Store the config entry data with default values
     hass.data[DOMAIN][entry.entry_id] = {
         "device_id": entry.data["device_id"],
         "friendly_name": entry.data.get("friendly_name", "Oven"),
-        "access_token": access_token,
         "oven_mode": "Bake",
         "oven_temperature": 350.0,
         "oven_cook_time": 30.0,

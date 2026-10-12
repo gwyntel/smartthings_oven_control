@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN, CONF_DEVICE_ID, CONF_FRIENDLY_NAME
-from .token_utils import get_smartthings_token
+from .token_utils import async_get_access_token
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,9 +24,12 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 
 async def validate_device_id(hass: HomeAssistant, device_id: str) -> str | None:
     """Validate device ID by testing API connectivity."""
-    access_token = await get_smartthings_token(hass)
+    access_token = await async_get_access_token(hass)
     if not access_token:
-        raise ValueError("SmartThings integration not found or token expired")
+        raise ValueError(
+            "Unable to obtain a SmartThings access token. Make sure the "
+            "SmartThings integration is set up and authenticated."
+        )
     
     # Test device connectivity with a simple status request
     import aiohttp
