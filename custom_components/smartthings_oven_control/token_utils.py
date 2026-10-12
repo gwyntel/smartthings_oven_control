@@ -8,7 +8,6 @@ refreshed via Home Assistant's OAuth2 session helpers.
 """
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 import time
@@ -44,9 +43,17 @@ async def _async_get_oauth_session(
             )
         )
     except (ValueError, KeyError) as err:
-        # ValueError: the implementation has not been registered (yet).
+        # ValueError: the implementation is not registered. On newer cores this
+        # arrives as UnknownImplementationError, which subclasses ValueError
+        # precisely "so callers catching that keep working" - so this stays
+        # correct without naming the newer class.
         # KeyError: the entry predates application credentials and carries no
         # "auth_implementation" key.
+        #
+        # Deliberately NOT caught: ImplementationUnavailableError (the OAuth
+        # provider is down). It subclasses ConfigEntryNotReady so Home
+        # Assistant retries setup on its own; swallowing it here would hide a
+        # transient outage behind the stale storage fallback.
         _LOGGER.debug("No OAuth2 implementation for SmartThings entry: %s", err)
         return None
 
@@ -116,12 +123,12 @@ async def _async_get_token_from_storage(hass: HomeAssistant) -> str | None:
         if not access_token:
             continue
         if expires_at and expires_at <= time.time():
-            _LOGGER.error(
-                "The stored SmartThings token expired and cannot be refreshed "
-                "without an OAuth2 implementation; reload the SmartThings "
-                "integration"
+            _LOGGER.warning(
+                "Stored SmartThings token for one entry has expired and cannot "
+                "be refreshed without an OAuth2 implementation; checking any "
+                "remaining entries"
             )
-            return None
+            continue
         return access_token
 
     _LOGGER.error("No SmartThings config entry found in storage")

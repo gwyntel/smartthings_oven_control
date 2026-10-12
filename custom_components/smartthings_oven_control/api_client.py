@@ -81,12 +81,24 @@ async def _async_request(
                         f"SmartThings API error: {response.status}"
                     )
 
-                return await response.json()
+                payload = await response.json()
+                # aiohttp returns None for an empty body rather than raising,
+                # and this function is annotated -> dict. Normalise so callers
+                # never get None where they expect a mapping.
+                return payload if payload is not None else {}
 
         except aiohttp.ClientError as err:
             _LOGGER.error("HTTP client error during SmartThings API call: %s", err)
             raise SmartThingsApiError(
                 f"Error communicating with SmartThings: {err}"
+            ) from err
+        except ValueError as err:
+            # response.json() raises json.JSONDecodeError (a ValueError) on an
+            # empty or malformed 200 body. That is not a ClientError, so without
+            # this it would escape as a raw ValueError instead of our own type.
+            _LOGGER.error("Malformed JSON in SmartThings API response: %s", err)
+            raise SmartThingsApiError(
+                f"Malformed response from SmartThings: {err}"
             ) from err
 
     # Unreachable: the loop either returns or raises.
